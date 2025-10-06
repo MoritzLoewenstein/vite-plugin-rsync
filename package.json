@@ -34,7 +34,10 @@
 	"keywords": [
 		"vite-plugin"
 	],
-	"author": "",
+	"author": {
+		"name": "Moritz Löwenstein",
+		"url": "https://github.com/MoritzLoewenstein"
+	},
 	"license": "MIT",
 	"volta": {
 		"node": "22.20.0"
