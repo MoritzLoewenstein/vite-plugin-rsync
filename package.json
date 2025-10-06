@@ -1,0 +1,54 @@
+{
+	"name": "@moritzloewenstein/vite-plugin-rsync",
+	"version": "1.0.0",
+	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/MoritzLoewenstein/vite-plugin-rsync"
+	},
+	"description": "",
+	"files": [
+		"dist"
+	],
+	"main": "./dist/index.js",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": "./dist/index.js",
+		"./package.json": "./package.json"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"scripts": {
+		"build": "tsdown",
+		"dev": "tsdown --watch",
+		"typecheck": "tsc --noEmit",
+		"biome:check": "biome check .",
+		"biome:write": "biome check --write .",
+		"biome:ci": "biome ci .",
+		"test": "node --test",
+		"test:only": "node --test --test-only",
+		"test:watch": "node --test --watch test"
+	},
+	"keywords": [
+		"vite-plugin"
+	],
+	"author": "",
+	"license": "MIT",
+	"volta": {
+		"node": "22.20.0"
+	},
+	"peerDependencies": {
+		"vite": "^7.x"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.2.5",
+		"@types/rsync": "^0.4.36",
+		"tsdown": "^0.15.6",
+		"typescript": "^5.9.3"
+	},
+	"dependencies": {
+		"rsync": "^0.6.1"
+	}
+}
