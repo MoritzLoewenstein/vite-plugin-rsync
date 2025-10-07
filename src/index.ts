@@ -1,18 +1,18 @@
 import path from "node:path";
 import Rsync from "rsync";
-import type { Plugin, ResolvedConfig } from "vite";
+import type { ResolvedConfig } from "vite";
 
-export type Options = {
+export type UserOptions = {
 	/**
 	 * glob(array) of files to include
-	 * @default `dist/`
+	 * @default dist/
 	 */
-	include: string[] | string;
+	include?: string[] | string;
 	/**
 	 * glob(array) of files to exclude
 	 * @default []
 	 */
-	exclude: string[] | string;
+	exclude?: string[] | string;
 	/** rsync target server */
 	target: {
 		/**
@@ -27,7 +27,7 @@ export type Options = {
 		 * rsync target port
 		 * @default 21
 		 */
-		port: number;
+		port?: number;
 		/**
 		 * rsync target path
 		 */
@@ -37,31 +37,67 @@ export type Options = {
 	 * disable logging
 	 * @default false
 	 */
+	silent?: boolean;
+};
+
+export type ResolvedOptions = {
+	include: string[] | string;
+	exclude: string[] | string;
+	target: {
+		user: string;
+		host: string;
+		port: number;
+		path: string;
+	};
 	silent: boolean;
 };
 
-export default function vitePluginRsync(pluginOptions: Options): Plugin {
+export type VitePluginRsync = {
+	name: "moritzloewenstein:vite-plugin-rsync";
+	apply: "build";
+	enforce: "post";
+	configResolved: (config: ResolvedConfig) => void;
+	closeBundle: {
+		sequential: true;
+		handler: (error?: Error) => Promise<void>;
+	};
+};
+
+export default function vitePluginRsync(
+	pluginOptions: UserOptions,
+): VitePluginRsync {
 	let config: ResolvedConfig;
-	pluginOptions.include ??= "dist/**/*";
-	pluginOptions.exclude ??= [];
 	let configValid = false;
+
+	const resolvedOptions: ResolvedOptions = {
+		include: pluginOptions.include ?? "dist/**/*",
+		exclude: pluginOptions.exclude ?? [],
+		target: {
+			user: pluginOptions.target.user,
+			host: pluginOptions.target.host,
+			port: pluginOptions.target.port ?? 21,
+			path: pluginOptions.target.path,
+		},
+		silent: pluginOptions.silent ?? false,
+	};
+
 	return {
 		name: "moritzloewenstein:vite-plugin-rsync",
 		apply: "build",
 		enforce: "post",
 		configResolved(_config: ResolvedConfig): void {
 			config = _config;
-			if (!pluginOptions.target.user) {
+			if (!resolvedOptions.target.user) {
 				config.logger.error(
 					"vite-plugin-rsync: Failed to provide options.target.user",
 				);
 			}
-			if (!pluginOptions.target.host) {
+			if (!resolvedOptions.target.host) {
 				config.logger.error(
 					"vite-plugin-rsync: Failed to provide options.target.host",
 				);
 			}
-			if (!pluginOptions.target.path) {
+			if (!resolvedOptions.target.path) {
 				config.logger.error(
 					"vite-plugin-rsync: Failed to provide options.target.path",
 				);
@@ -74,14 +110,14 @@ export default function vitePluginRsync(pluginOptions: Options): Plugin {
 				if (error || !configValid) {
 					return;
 				}
-				await deployRsync(pluginOptions, config);
+				await deployRsync(resolvedOptions, config);
 			},
 		},
 	};
 }
 
 function deployRsync(
-	pluginOptions: Options,
+	pluginOptions: ResolvedOptions,
 	viteConfig: ResolvedConfig,
 ): Promise<unknown> {
 	const sourcePath = getRsyncSourcePath(viteConfig.root);
@@ -127,13 +163,13 @@ function deployRsync(
 		},
 		(data) => {
 			!pluginOptions.silent &&
-				printBufferToLines(viteConfig.logger.error, data, "[rsync] ERR:");
+				printBufferToLines(viteConfig.logger.error, data, "[rsync]");
 		},
 	);
 	return promise;
 }
 
-function getRsyncSourcePath(dirPath: string): string {
+export function getRsyncSourcePath(dirPath: string): string {
 	if (process.platform === "win32" && dirPath[1] === ":") {
 		dirPath = windowsPathToCygwinPath(dirPath);
 	}
@@ -145,7 +181,7 @@ function getRsyncSourcePath(dirPath: string): string {
 	return dirPath;
 }
 
-function windowsPathToCygwinPath(dirPath: string): string {
+export function windowsPathToCygwinPath(dirPath: string): string {
 	// get diskSign and rest of dirPath
 	const diskSign = dirPath.charAt(0).toLowerCase();
 	dirPath = dirPath.substring(2);
