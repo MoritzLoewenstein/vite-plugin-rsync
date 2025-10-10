@@ -1,5 +1,5 @@
 import path from "node:path";
-import Rsync from "rsync";
+import Rsync, { type RsyncResult } from "@moritzloewenstein/rsync";
 import type { ResolvedConfig } from "vite";
 
 export type UserOptions = {
@@ -116,13 +116,12 @@ export default function vitePluginRsync(
 	};
 }
 
-function deployRsync(
+async function deployRsync(
 	pluginOptions: ResolvedOptions,
 	viteConfig: ResolvedConfig,
-): Promise<unknown> {
+): Promise<RsyncResult> {
 	const sourcePath = getRsyncSourcePath(viteConfig.root);
-	const { promise, reject, resolve } = Promise.withResolvers();
-	const rsyncCommand = Rsync.build({
+	const rsyncCommand = new Rsync({
 		// trailing slash is important (contents of the directory will be copied, not directory itself)
 		source: sourcePath,
 		destination: `${pluginOptions.target.user}@${pluginOptions.target.host}:${pluginOptions.target.path}`,
@@ -139,24 +138,7 @@ function deployRsync(
 		],
 		shell: "ssh",
 	});
-	rsyncCommand.execute(
-		(err, code, _cmd) => {
-			if (err) {
-				!pluginOptions.silent &&
-					viteConfig.logger.error(`[rsync] ${code} ${err.message}`);
-				reject(err);
-				return;
-			}
-
-			if (code === 0) {
-				!pluginOptions.silent && viteConfig.logger.info("[rsync] SUCCESS");
-				resolve(undefined);
-				return;
-			}
-
-			!pluginOptions.silent && viteConfig.logger.error(`[rsync] ${code}`);
-			reject(new Error(`rsync exited with code ${code}`));
-		},
+	const result = await rsyncCommand.execute(
 		(data) => {
 			!pluginOptions.silent &&
 				printBufferToLines(viteConfig.logger.info, data, "[rsync]");
@@ -166,7 +148,7 @@ function deployRsync(
 				printBufferToLines(viteConfig.logger.error, data, "[rsync]");
 		},
 	);
-	return promise;
+	return result;
 }
 
 export function getRsyncSourcePath(dirPath: string): string {

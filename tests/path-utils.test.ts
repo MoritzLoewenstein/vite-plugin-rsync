@@ -1,9 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import {
-	getRsyncSourcePath,
-	windowsPathToCygwinPath,
-} from "../src/index.ts";
+import { getRsyncSourcePath, windowsPathToCygwinPath } from "../src/index.ts";
 
 describe("windowsPathToCygwinPath", () => {
 	it("should convert Windows path to Cygwin path", () => {

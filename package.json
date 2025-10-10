@@ -47,11 +47,10 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.2.5",
-		"@types/rsync": "^0.4.36",
 		"tsdown": "^0.15.6",
 		"typescript": "^5.9.3"
 	},
 	"dependencies": {
-		"rsync": "^0.6.1"
+		"@moritzloewenstein/rsync": "^1.0.1"
 	}
 }
