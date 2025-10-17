@@ -46,11 +46,11 @@
 		"vite": "^7.x"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.2.5",
-		"tsdown": "^0.15.6",
+		"@biomejs/biome": "^2.2.6",
+		"tsdown": "^0.15.7",
 		"typescript": "^5.9.3"
 	},
 	"dependencies": {
-		"@moritzloewenstein/rsync": "^1.0.1"
+		"@moritzloewenstein/rsync": "^1.0.3"
 	}
 }
