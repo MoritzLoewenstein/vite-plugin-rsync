@@ -51,6 +51,7 @@ jobs:
 
       - run: npm run build
 
+      - run: npm install -g npm@latest
       - run: npm version
 
       - name: Publish to npm
