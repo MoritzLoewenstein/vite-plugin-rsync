@@ -5,6 +5,5 @@ export default defineConfig([
 		entry: ["./src/index.ts"],
 		platform: "node",
 		dts: true,
-		fixedExtension: false,
 	},
 ]);
