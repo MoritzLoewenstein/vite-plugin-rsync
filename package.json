@@ -52,6 +52,6 @@
 		"typescript": "^6.0.2"
 	},
 	"dependencies": {
-		"@moritzloewenstein/rsync": "^1.0.5"
+		"@moritzloewenstein/rsync": "^1.0.6"
 	}
 }
