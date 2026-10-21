@@ -40,7 +40,7 @@
 	},
 	"license": "MIT",
 	"volta": {
-		"node": "22.20.0"
+		"node": "22.23.3"
 	},
 	"peerDependencies": {
 		"vite": "^8.0.3"
