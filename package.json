@@ -1,6 +1,6 @@
 {
 	"name": "@moritzloewenstein/vite-plugin-rsync",
-	"version": "2.0.2",
+	"version": "3.0.0",
 	"type": "module",
 	"repository": {
 		"type": "git",
@@ -46,10 +46,11 @@
 		"vite": "^8.0.3"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.4.10",
-		"@types/node": "^22.19.15",
-		"tsdown": "^0.21.7",
-		"typescript": "^6.0.2"
+		"@biomejs/biome": "^2.6.2",
+		"@types/node": "^22.20.5",
+		"tsdown": "^0.23.1",
+		"typescript": "^7.0.2",
+		"vite": "^8.3.5"
 	},
 	"dependencies": {
 		"@moritzloewenstein/rsync": "^1.0.6"
